@@ -17,10 +17,10 @@ passport.use(new GitHubStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     console.log(profile);
-    var githubUser = {
-      username: profile.name,
-      email: profile.email
-    };
+    var githubUser = new User({
+      username: profile.displayName,
+      email: "addYourEmail@whatever.com"//test for email null
+    });
     // User.findOrCreate(githubUser, function (err, user) {
     //   return done(err, user);
     // });
@@ -33,6 +33,19 @@ passport.use(new GitHubStrategy({
     });
   }
 ));
+
+// serialize and deserialize user (passport)
+passport.serializeUser(function(user, done) {
+  // console.log('serializeUser: ' + user._id);
+  done(null, user._id);
+});
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user){
+    // console.log(user);
+    if(!err) done(null, user);
+    else done(err, null);
+  });
+});
 
 
 module.exports = passport;

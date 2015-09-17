@@ -6,13 +6,17 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express Social Auth' });
 });
 
+router.get('/account', function(req, res, next) {
+  res.send(req.user);
+});
+
 router.get('/auth/github',
   passport.authenticate('github'));
 
 router.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect('/account');
   });
 
 module.exports = router;
