@@ -3,8 +3,9 @@
 //register app on github, create a model for mongoose, setup config file/env variables
 
 var passport = require('passport');
-var GitHubStrategy = require('passport-github').
-  Strategy;
+var GitHubStrategy = require('passport-github').Strategy;
+var User = require('../models/user');
+var mongoose = require('mongoose');
 
 var GITHUB_CLIENT_ID = 'cdbd12be63cc8b0a93f0';
 var GITHUB_CLIENT_SECRET = '88e6f6dead0e7b4000ce065bf54760ea4f853451';
@@ -16,9 +17,20 @@ passport.use(new GitHubStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     console.log(profile);
-    // User.findOrCreate({ githubId: profile.id }, function (err, user) {
+    var githubUser = {
+      username: profile.name,
+      email: profile.email
+    };
+    // User.findOrCreate(githubUser, function (err, user) {
     //   return done(err, user);
     // });
+    githubUser.save(function(err, user){
+      if (err){
+        done(err);
+      } else {
+        done(null, user);
+      }
+    });
   }
 ));
 
